@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Tarif Ara{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Malzemelere Göre Tarif Bul</h2>
+<form method="POST" class="row g-3 mb-4">
+    <div class="col-md-10">
+        <input type="text" name="ingredients" class="form-control" placeholder="Malzemeleri virgülle ayırarak yazınız..." required>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Tarif Getir</button>
+    </div>
+</form>
+
+<h3>Önerilen Tarifler</h3>
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-md-12 mb-4">
+        <div class="card border-success">
+            <div class="card-body">
+                <h5 class="card-title text-success">{{ recipe.title }}</h5>
+                <p class="card-text"><b>Hazırlanışı:</b><br>
+                    <pre class="mb-0">{{ recipe.description }}</pre>
+                </p>
+                <p class="card-text"><b>İçerik (Malzemeler):</b><br><pre class="mb-0">{{ recipe.content or 'İçerik bulunamadı.' }}</pre></p>
+                {% if current_user.is_authenticated %}
+                    <form method="POST" action="{{ url_for('main.like', recipe_id=recipe.id) }}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            {% if recipe in current_user.liked_recipes %}
+                                ❤️ Beğenildi
+                            {% else %}
+                                🤍 Beğendim
+                            {% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary btn-sm">Beğenmek için giriş yap</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
